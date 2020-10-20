@@ -1,7 +1,7 @@
 import random
 import requests
 from bs4 import BeautifulSoup, NavigableString
-#import tensorflow
+#import tensorflow as tf
 
 class Paper():
     def __init__(self, title, authors, abstract, keywords):
@@ -74,4 +74,5 @@ def train(model):
     """Trains a neural network classifier."""
     return
 
+# tests
 scrapeLingBuzz()

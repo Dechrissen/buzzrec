@@ -1,2 +1,2 @@
 # recommender
- A neural network classifier that recommends [undecided] to a user.
+ A neural network classifier that recommends linguistics academic papers to a user.
