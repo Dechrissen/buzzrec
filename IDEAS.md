@@ -1,9 +1,18 @@
 # Recommender Ideas
 
-- User should start by populating the empty file `settings.txt` to specify interests via keywords. If there is nothing in the file upon starting the engine, it will notify the user to do so before starting.
+- User should start by populating the empty file `settings.txt` to specify two things:
+  - keywords interested in
+  - keywords to avoid
+
+If there is nothing in the file upon starting the engine, it will notify the user to do so before starting.
 
 
 ## Scraping LingBuzz
 
 - Homepage is organized into a table, with each row (paper) comprised of 4 cells:
-  - authors || newness of upload || format type / link to paper || title / link to abstract 
+  - authors || newness of upload || format type / link to paper || title / link to abstract
+
+
+## To Do
+
+- Make function that collects papers from LingBuzz according to user-defined pos/neg keywords to get user-specific training data (abstracts)
