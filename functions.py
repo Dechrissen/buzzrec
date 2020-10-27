@@ -76,6 +76,8 @@ def scrapeLingBuzz():
 
     # Construct Paper object
     current_paper = Paper(title, pdf_link, abstract)
+
+    # Tests
     print(current_paper.title)
     print(current_paper.link)
     print(current_paper.abstract)
