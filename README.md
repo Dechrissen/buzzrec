@@ -1,2 +1,2 @@
-# recommender
- A neural network classifier that recommends linguistics academic papers to a user.
+# LingBuzzRec
+ A content-based filtering recommendation engine for LingBuzz papers.
