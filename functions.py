@@ -96,10 +96,6 @@ def classifier(text):
     """
     return random.choice([True, False])
 
-def train(model):
-    """Trains a neural network classifier."""
-    return
-
 
 
 # tests
