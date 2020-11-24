@@ -4,24 +4,26 @@ from bs4 import BeautifulSoup, NavigableString
 #import tensorflow as tf
 
 class Paper():
-    def __init__(self, title, link, abstract):
+    def __init__(self, title, link, authors, abstract, keywords):
         assert type(title) is str
         assert type(link) is str
-        #assert type(authors) is list
-        #for author in authors:
-            #assert type(author) is str
+        assert type(authors) is list
+        for author in authors:
+            assert type(author) is str
         assert type(abstract) is str
-        #assert type(keywords) is list
-        #for keyword in keywords:
-            #assert type(keyword) is str
+        assert type(keywords) is list
+        for keyword in keywords:
+            assert type(keyword) is str
         self.title = title
         self.link = link
-        #self.authors = authors
+        self.authors = authors
         self.abstract = abstract
-        #self.keywords = keywords
+        self.keywords = keywords
 
 def scrapeLingBuzz():
-    """Scrapes LingBuzz homepage for new papers to extract title, authors, abstract, and keywords. Creates a new Paper object for each new upload."""
+    """Scrapes LingBuzz homepage for new papers to extract title, link to paper,
+     authors, abstract, and keywords. Creates a new Paper object for each new
+     upload."""
 
     # Get LingBuzz homepage
     homepage = requests.get('https://ling.auf.net/lingbuzz')
@@ -41,24 +43,25 @@ def scrapeLingBuzz():
     recent_papers_table = list(td_1.children)
 
     # Authors
-    authors_td = list(list(recent_papers_table[10].children)[0].children)
+    authors = []
+    authors_td = list(list(recent_papers_table[15].children)[0].children)
     for tag in authors_td:
         if tag.name == 'a':
-            print(tag.get_text())
+            authors.append(tag.get_text())
 
     # Newness
-    newness_td = list(list(recent_papers_table[10].children)[1].children)[0]
+    newness_td = list(list(recent_papers_table[15].children)[1].children)[0]
     if isinstance(newness_td, NavigableString):
-        print("none here") # eventually ignore this entry if there are no children (i.e. a singular <b>)
+        print("Newness: None") # eventually ignore this entry if there are no children (i.e. a singular <b>)
     else:
-        print(list(newness_td.children)[0])
+        print("Newness:", list(newness_td.children)[0])
 
     # PDF link
-    pdf_td = list(list(recent_papers_table[10].children)[2].children)[0]
+    pdf_td = list(list(recent_papers_table[15].children)[2].children)[0]
     pdf_link = 'https://ling.auf.net' + pdf_td['href']
 
     # Link to summary
-    summary_td = list(list(recent_papers_table[10].children)[3].children)[0]
+    summary_td = list(list(recent_papers_table[15].children)[3].children)[0]
     summary_link = 'https://ling.auf.net' + summary_td['href']
 
     # Title
@@ -74,13 +77,20 @@ def scrapeLingBuzz():
     # The abstract is at the 5th index of the body's children list
     abstract = str(list(body.children)[5])
 
+    # Keywords
+    keywords_tr = list(list(body.children)[6].children)[3]
+    keywords_list_td = list(keywords_tr.children)[1]
+    keywords = keywords_list_td.get_text().split(', ')
+
     # Construct Paper object
-    current_paper = Paper(title, pdf_link, abstract)
+    current_paper = Paper(title, pdf_link, authors, abstract, keywords)
 
     # Tests
     print(current_paper.title)
     print(current_paper.link)
+    print(current_paper.authors)
     print(current_paper.abstract)
+    print(current_paper.keywords)
 
 
 def classifier(text):
@@ -98,5 +108,5 @@ def classifier(text):
 
 
 
-# tests
+# Run tests
 scrapeLingBuzz()
