@@ -1,6 +1,7 @@
 import random
 import requests
 from bs4 import BeautifulSoup, NavigableString
+import re
 #import tensorflow as tf
 
 class Paper():
@@ -41,27 +42,27 @@ def scrapeLingBuzz():
     # Each element (paper) is a <tr>
     # Each <tr> is comprised of 4 <td> tags containing: Authors, Newness, PDF link, Title
     recent_papers_table = list(td_1.children)
-
+    n = 7 # number of the paper to find
     # Authors
     authors = []
-    authors_td = list(list(recent_papers_table[15].children)[0].children)
+    authors_td = list(list(recent_papers_table[n].children)[0].children)
     for tag in authors_td:
         if tag.name == 'a':
             authors.append(tag.get_text())
 
     # Newness
-    newness_td = list(list(recent_papers_table[15].children)[1].children)[0]
+    newness_td = list(list(recent_papers_table[n].children)[1].children)[0]
     if isinstance(newness_td, NavigableString):
         print("Newness: None") # eventually ignore this entry if there are no children (i.e. a singular <b>)
     else:
         print("Newness:", list(newness_td.children)[0])
 
     # PDF link
-    pdf_td = list(list(recent_papers_table[15].children)[2].children)[0]
+    pdf_td = list(list(recent_papers_table[n].children)[2].children)[0]
     pdf_link = 'https://ling.auf.net' + pdf_td['href']
 
     # Link to summary
-    summary_td = list(list(recent_papers_table[15].children)[3].children)[0]
+    summary_td = list(list(recent_papers_table[n].children)[3].children)[0]
     summary_link = 'https://ling.auf.net' + summary_td['href']
 
     # Title
@@ -80,7 +81,9 @@ def scrapeLingBuzz():
     # Keywords
     keywords_tr = list(list(body.children)[6].children)[3]
     keywords_list_td = list(keywords_tr.children)[1]
-    keywords = keywords_list_td.get_text().split(', ')
+    keywords = keywords_list_td.get_text()
+    keywords = re.split(r'[,|;]', keywords)
+    keywords = [k.strip() for k in keywords]
 
     # Construct Paper object
     current_paper = Paper(title, pdf_link, authors, abstract, keywords)
