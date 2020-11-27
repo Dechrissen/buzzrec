@@ -219,6 +219,6 @@ def classifier(text):
 #print(current_paper.keywords)
 #print(current_paper.date)
 
-collected_papers = queryLingBuzz('pokemon')
-for x in collected_papers:
-    print(x.date)
+#collected_papers = queryLingBuzz('pokemon')
+#for x in collected_papers:
+    #print(x.date)
