@@ -1,13 +1,16 @@
 import pandas as pd
-#import numpy as np
+import numpy as np
 from rake_nltk import Rake
 import json
+import ast
 import csv
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import CountVectorizer
 from functions import *
 
 
 def clean_authors(author_list):
-    return [author.lower().strip().replace(' ', '') for author in author_list]
+    return [author.lower().strip().replace(' ', '').replace(',', '') for author in author_list]
 
 def create_csv():
     """Creates an initial user-specific dataset (`user.csv`) of papers from
@@ -53,25 +56,23 @@ def merge_df(df):
     ----------
     df : dataframe to be merged by column into one bag_of_words column
     """
-    bag_of_words_list = []
+
     # create new column which relevant columns (Authors, Abstract, Keywords) will be collapsed into
     df['bag_of_words'] = ''
 
-    # collect Authors column
     for index, row in df.iterrows():
+        # create empty list to which final key words are added per paper
+        bag_of_words_list = []
+        # collect Authors column
         authors = row['Authors']
-
-        author_list = json.loads(authors) # TODO fix this, not working for no reason wtf
-
+        author_list = ast.literal_eval(authors)
         # clean each author in the author list
         author_list = clean_authors(author_list)
         # add authors to bag_of_words_list
         bag_of_words_list.extend(author_list)
-        # drop Authors column
-        df.drop(['Authors'], axis = 1)
 
-    # collect Abstract column
-    for index, row in df.iterrows():
+
+        # collect Abstract column
         abstract = row['Abstract']
         # first extract keywords from Abstract column via nltk's Rake
         r = Rake()
@@ -80,19 +81,25 @@ def merge_df(df):
         abstract_keywords = list(keywords_dict_scores.keys())
         # add abstract_keywords to bag_of_words_list
         bag_of_words_list.extend(abstract_keywords)
-        # drop Abstract column
-        df.drop(['Abstract'], axis = 1)
 
-    # collect Keywords column
-    for index, row in df.iterrows():
+
+        # collect Keywords column
         keywords = row['Keywords']
+        keywords_list = ast.literal_eval(keywords)
         # add keywords to bag_of_words_list
-        bag_of_words_list.extend(list(keywords))
-        # drop Keywords column
-        df.drop(['Keywords'], axis = 1)
+        bag_of_words_list.extend(keywords_list)
 
-    # add everything
-    df.at[index, 'bag_of_words'] = bag_of_words_list
+        words = ''
+        for word in bag_of_words_list:
+            words = words + word
+        # add everything to bag_of_words column for current paper
+        df.at[index, 'bag_of_words'] = words
+
+    # drop Authors column
+    df.drop(columns = ['Authors', 'Abstract', 'Keywords'], inplace=True)
+
+    return df
+
 
 
 
@@ -103,9 +110,44 @@ def merge_df(df):
 df = create_df()
 
 # merge the dataframe's columns into one bag_of_words column
-merge_df(df)
+df = merge_df(df)
 
-#print(df['Title'][6])
-#print(df['Key_words'][6])
-#
-print(df.head(3))
+# set the dataframe's Title column as index
+df.set_index('Title', inplace=True)
+#print(df.head())
+
+# Actual stuff
+
+# instantiating and generating the count matrix
+count = CountVectorizer()
+count_matrix = count.fit_transform(df['bag_of_words'])
+indices = pd.Series(df.index)
+print(indices[:5])
+
+# generating the cosine similarity matrix
+cosine_sim = cosine_similarity(count_matrix, count_matrix)
+print(cosine_sim)
+
+
+
+# function that takes in paper title as input and returns the top 5 recommended papers
+def recommendations(title, cosine_sim = cosine_sim):
+
+    recommended_movies = []
+
+    # gettin the index of the movie that matches the title
+    idx = indices[indices == title].index[0]
+
+    # creating a Series with the similarity scores in descending order
+    score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
+
+    # getting the indexes of the 5 most similar movies
+    top_5_indexes = list(score_series.iloc[1:6].index)
+
+    # populating the list with the titles of the best 5 matching movies
+    for i in top_5_indexes:
+        recommended_movies.append(list(df.index)[i])
+
+    return recommended_movies
+
+print(recommendations('A stripy wug-shaped curves in sound symbolism'))
