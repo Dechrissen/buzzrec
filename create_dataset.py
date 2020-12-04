@@ -150,4 +150,4 @@ def recommendations(title, cosine_sim = cosine_sim):
 
     return recommended_movies
 
-print(recommendations('A stripy wug-shaped curves in sound symbolism'))
+print(recommendations('The Faculty of Language Integrates the Two Core Systems of Number'))
