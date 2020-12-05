@@ -169,7 +169,7 @@ def queryLingBuzz(query):
         # aren't formatted consistently? The ones from 'semantics archive'
         try:
             pdf_tr = list(list(body.children)[6].children)[0]
-        except IndexError:
+        except (IndexError, AttributeError):
             continue
         # Catch a potential nonexistent PDF link in summary page (and skip current iteration / paper)
         try:
