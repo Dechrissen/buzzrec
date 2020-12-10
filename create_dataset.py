@@ -131,9 +131,9 @@ df.set_index('Title', inplace=True)
 #count = CountVectorizer()
 #count_matrix = count.fit_transform(df['bag_of_words'])
 
-# instantiating and generating the count matrix
+# instantiating and generating the tfidf matrix
 tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
-count_matrix = tf.fit_transform(df['bag_of_words'])
+tfidf_matrix = tf.fit_transform(df['bag_of_words'])
 
 # create series for indexes
 indices = pd.Series(df.index)
@@ -144,7 +144,7 @@ lnx = pd.Series(df['Link'])
 
 
 # generating the cosine similarity matrix
-cosine_sim = cosine_similarity(count_matrix, count_matrix)
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 #new one from tdidf article
 #cosine_sim = linear_kernel(count_matrix, count_matrix)
@@ -181,7 +181,7 @@ def recommendations(title, cosine_sim):
 
     return recommended_papers
 
-title = 'Basic Features of the Phonematic System in the Prehistory of the German'
+title = 'Exploring sound symbolic knowledge of English speakers using Pokemon character names'
 recs = recommendations(title, cosine_sim)
 for r in recs:
     print(r)
