@@ -15,4 +15,4 @@
 
 ## To Do
 
-- Start content-based filtering functions
+- Engine recommends papers from the *same* dataset. Now make it do so for *new* papers collected from LingBuzz via `scrapeLingBuzzHomePage`.

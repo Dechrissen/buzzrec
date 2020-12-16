@@ -6,6 +6,7 @@ Populate `config.json` with the following information:
 - your email address,
 - keywords that define your interests (`buzzrec` will take these into consideration for its initial data collection).  
 
+For example:
 ```json
 {
   "email" : "john.smith@email.com",

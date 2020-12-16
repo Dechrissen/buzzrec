@@ -4,11 +4,9 @@ from rake_nltk import Rake
 import json
 import ast
 import csv
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+
 from functions import *
+from paper import Paper
 
 
 def clean_authors(author_list):
@@ -16,8 +14,7 @@ def clean_authors(author_list):
 
 def create_csv():
     """Creates an initial user-specific dataset (`user.csv`) of papers from
-    LingBuzz according to keywords in `config.json`.
-    """
+    LingBuzz according to keywords in `config.json`."""
     print("Fetching papers ... this may take a few minutes.")
     # open config file to get user-entered parameters
     f = open('config.json', 'r')
@@ -28,8 +25,12 @@ def create_csv():
     # find papers from LingBuzz matching user preferences
     collected_papers = []
     for term in config['keywords']:
-        papers_to_add = queryLingBuzz(term)
-        collected_papers.extend(papers_to_add)
+        try:
+            papers_to_add = queryLingBuzz(term)
+            collected_papers.extend(papers_to_add)
+        except:
+            print('No results found for', term)
+            continue
 
     # create csv dataset file with relevant papers
     with open('user.csv', 'w') as csvfile:
@@ -42,6 +43,7 @@ def create_csv():
             except UnicodeEncodeError:
                 print('UnicodeEncodeError: \'' + paper.title[:31]+'...\'', 'skipped')
                 continue
+    print('Done')
 
 
 def create_df():
@@ -68,6 +70,7 @@ def merge_df(df):
     for index, row in df.iterrows():
         # create empty list to which final key words are added per paper
         bag_of_words_list = []
+
         # collect Authors column
         authors = row['Authors']
         author_list = ast.literal_eval(authors)
@@ -102,86 +105,3 @@ def merge_df(df):
     df.drop(columns = ['Authors', 'Abstract', 'Keywords'], inplace=True)
 
     return df
-
-
-
-
-
-
-
-
-# Tests
-np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)})
-
-#create_csv()
-
-# create the dataframe
-df = create_df()
-
-# merge the dataframe's columns into one bag_of_words column
-df = merge_df(df)
-
-# set the dataframe's Title column as index
-df.set_index('Title', inplace=True)
-#print(df.head())
-
-# Actual stuff
-
-# instantiating and generating the count matrix
-#count = CountVectorizer()
-#count_matrix = count.fit_transform(df['bag_of_words'])
-
-# instantiating and generating the tfidf matrix
-tf = TfidfVectorizer(analyzer='word', ngram_range=(1, 3), min_df=0, stop_words='english')
-tfidf_matrix = tf.fit_transform(df['bag_of_words'])
-
-# create series for indexes
-indices = pd.Series(df.index)
-print(indices[:5])
-
-# create series for PDF links
-lnx = pd.Series(df['Link'])
-
-
-# generating the cosine similarity matrix
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-
-#new one from tdidf article
-#cosine_sim = linear_kernel(count_matrix, count_matrix)
-print(cosine_sim)
-
-# save the matrix as CSV
-#np.savetxt('similarity_matrix.csv', cosine_sim, delimiter=',')
-
-
-
-def recommendations(title, cosine_sim):
-    """Function that takes in paper title as input and returns the top 5 recommended papers."""
-
-    recommended_papers = []
-
-    # getting the index of the movie that matches the title
-    idx = indices[indices == title].index[0]
-
-    # creating a Series with the similarity scores in descending order
-    score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
-    print(type(score_series))
-    print(len(score_series))
-
-
-    # getting the indexes of the 5 most similar papers
-    top_5_indexes = list(score_series.iloc[1:11].index)
-    print(score_series.iloc[1:11].index)
-    print(score_series.iloc[1:11])
-
-
-    # populating the list with the titles of the best 5 matching papers
-    for i in top_5_indexes:
-        recommended_papers.append(list(df.index)[i] + " " + df['Link'][i])
-
-    return recommended_papers
-
-title = 'Exploring sound symbolic knowledge of English speakers using Pokemon character names'
-recs = recommendations(title, cosine_sim)
-for r in recs:
-    print(r)

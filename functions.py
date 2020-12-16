@@ -2,26 +2,9 @@ import random
 import requests
 from bs4 import BeautifulSoup, NavigableString
 import re
-#import tensorflow as tf
+from paper import Paper
 
-class Paper():
-    def __init__(self, title, link, authors, abstract, keywords, date):
-        assert type(title) is str
-        assert type(link) is str
-        assert type(authors) is list
-        for author in authors:
-            assert type(author) is str
-        assert type(abstract) is str
-        assert type(keywords) is list
-        for keyword in keywords:
-            assert type(keyword) is str
-        assert type(date) is str
-        self.title = title
-        self.link = link
-        self.authors = authors
-        self.abstract = abstract
-        self.keywords = keywords
-        self.date = date
+
 
 def scrapeLingBuzzHomePage():
     """Scrapes LingBuzz homepage for new papers to extract title, link to paper,
@@ -117,7 +100,7 @@ def queryLingBuzz(query):
 
     # Check if query returned 'nothing found' and return empty list if so
     if str(list(list(main_table.children)[0].children)[0]) == 'nothing found':
-        print('results: nothing found')
+        print('Results: nothing found')
         return []
 
     # Store html table of entire first page of papers in main_table
