@@ -21,15 +21,16 @@ def recommend(title, cosine_sim):
     #print(len(score_series))
 
     # getting the indexes of the 5 most similar papers
-    top_5_indexes = list(score_series.iloc[1:11].index)
-    #print(score_series.iloc[1:11].index)
-    #print(score_series.iloc[1:11])
+    top_5_indexes = list(score_series.iloc[1:5].index)
+    highest_score = float(score_series.iloc[1])
+    #print(score_series.iloc[1:5].index)
+    #print(score_series.iloc[1:5])
 
     # populating the list with the titles of the best 5 matching papers
     for i in top_5_indexes:
         recommended_papers[list(df.index)[i]] = df['Link'][i]
 
-    return recommended_papers
+    return recommended_papers, highest_score
 
 #####################################
 ######## Program begins here ########
@@ -38,7 +39,11 @@ np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)})
 
 # construct a .csv file containing all papers found on LingBuzz from querying
 # with user-entered keywords
-create_csv()
+
+#create_csv()
+
+# create a copy of `user.csv` with 5 extra papers appended
+test_titles = create_csv_copy('user.csv')
 
 # create the dataframe according to `user.csv`
 df = create_df()
@@ -46,6 +51,7 @@ df = create_df()
 # merge the dataframe's columns (authors, abstract, keywords) into
 # one bag_of_words column
 df = merge_df(df)
+print('sample cell:', df['bag_of_words'][3])
 
 # set the dataframe's Title column as index
 df.set_index('Title', inplace=True)
@@ -76,8 +82,19 @@ np.savetxt('similarity_matrix.csv', cosine_sim, delimiter=',')
 # Reading the .csv into an array (for later use)
 #cosine_sim = np.genfromtxt("similarity_matrix.csv", delimiter=",")
 
-title = 'Exploring sound symbolic knowledge of English speakers using Pokemon character names'
-recs = recommend(title, cosine_sim)
-for r in recs.keys():
-    print(r)
-    print(recs[r])
+
+highest = 0
+recommendation = None
+for t in test_titles:
+    recs, score = recommend(t, cosine_sim)
+    if score > highest:
+        highest = score
+        recommendation = t
+print('Recommendation:', recommendation, '\nLink to PDF:', df['Link'][recommendation])
+
+
+#title = 'A wug-shaped curve in sound symbolism: The case of Japanese Pokémon names'
+
+#for r in recs.keys():
+    #print(r)
+    #print(recs[r])

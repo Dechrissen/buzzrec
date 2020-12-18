@@ -4,10 +4,27 @@ from rake_nltk import Rake
 import json
 import ast
 import csv
-
 from functions import *
 from paper import Paper
 
+
+def create_csv_copy(filename):
+    test_titles = []
+    df = pd.read_csv(filename, sep=',', encoding='ISO-8859-1')
+    new_filename = 'user_plus.csv'
+    df.to_csv(new_filename, index = False)
+    with open(new_filename, 'a') as csvfile:
+        filewriter = csv.writer(csvfile, delimiter=',')
+        check = 3
+        for n in range(check):
+            paper = scrapeLingBuzzHomePage(n)
+            try:
+                filewriter.writerow([paper.title, paper.link, paper.authors, paper.abstract, paper.keywords])
+                test_titles.append(paper.title)
+            except UnicodeEncodeError:
+                print('UnicodeEncodeError: \'' + paper.title[:31]+'...\'', 'skipped')
+                continue
+    return test_titles
 
 def clean_authors(author_list):
     return [author.lower().strip().replace(' ', '').replace(',', '') for author in author_list]
@@ -35,11 +52,11 @@ def create_csv():
     # create csv dataset file with relevant papers
     with open('user.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',')
-        filewriter.writerow(['Title', 'Link', 'Authors', 'Abstract', 'Keywords', 'Date'])
+        filewriter.writerow(['Title', 'Link', 'Authors', 'Abstract', 'Keywords'])
         for paper in collected_papers:
             # Catch potential UnicodeEncodeError (certain characters don't want to be written in csv files)
             try:
-                filewriter.writerow([paper.title, paper.link, paper.authors, paper.abstract, paper.keywords, paper.date])
+                filewriter.writerow([paper.title, paper.link, paper.authors, paper.abstract, paper.keywords])
             except UnicodeEncodeError:
                 print('UnicodeEncodeError: \'' + paper.title[:31]+'...\'', 'skipped')
                 continue
@@ -48,10 +65,10 @@ def create_csv():
 
 def create_df():
     """Returns a pandas dataframe object created accoring to `user.csv`."""
-    print("Creating initial dataset in user.csv ...")
+    print("Creating initial user dataframe ...")
     # encoding='ISO-8859-1' is used here to prevent UnicodeDecodeError
-    df = pd.read_csv('user.csv', sep=',', encoding='ISO-8859-1')
-    df = df[['Title', 'Link', 'Authors', 'Abstract', 'Keywords', 'Date']]
+    df = pd.read_csv('user_plus.csv', sep=',', encoding='ISO-8859-1')
+    df = df[['Title', 'Link', 'Authors', 'Abstract', 'Keywords']]
     return df
 
 
@@ -97,7 +114,7 @@ def merge_df(df):
 
         words = ''
         for word in bag_of_words_list:
-            words = words + word
+            words = words + ' ' + word
         # add everything to bag_of_words column for current paper
         df.at[index, 'bag_of_words'] = words
 
@@ -105,3 +122,5 @@ def merge_df(df):
     df.drop(columns = ['Authors', 'Abstract', 'Keywords'], inplace=True)
 
     return df
+
+#create_csv_copy('user.csv')

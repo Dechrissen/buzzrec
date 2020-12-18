@@ -6,10 +6,9 @@ from paper import Paper
 
 
 
-def scrapeLingBuzzHomePage():
+def scrapeLingBuzzHomePage(number_of_paper):
     """Scrapes LingBuzz homepage for new papers to extract title, link to paper,
-     authors, abstract, and keywords. Creates a new Paper object for each new
-     upload."""
+     authors, abstract, and keywords. Returns a Paper object."""
 
     # Get LingBuzz homepage
     homepage = requests.get('https://ling.auf.net/lingbuzz/')
@@ -27,7 +26,7 @@ def scrapeLingBuzzHomePage():
     # Each element (paper) is a <tr>
     # Each <tr> is comprised of 4 <td> tags containing: Authors, Newness, PDF link, Title
     recent_papers_table = list(td_1.children)
-    n = 24 # number of the paper to find
+    n = number_of_paper # number of the paper to find
     # Authors
     authors = []
     authors_td = list(list(recent_papers_table[n].children)[0].children)
