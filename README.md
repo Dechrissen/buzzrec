@@ -33,6 +33,8 @@ For example:
 }
 ```
 
+*Note*: Try to make your keywords more specific than 'phonology' or 'syntax', otherwise the initial data collection will take a while. Each keyword will make a new query to  LingBuzz; the narrower the term, the more specific the results.
+
 ### Using the tool
 
 `cd` to the `buzzrec` directory, then:
