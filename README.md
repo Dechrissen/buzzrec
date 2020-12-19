@@ -43,6 +43,8 @@ For example:
 $ python recommender.py
 ```
 
+The 10 most recent LingBuzz paper uploads will be compared against your specific tastes, and the most similar paper will be recommended to you along with a link to its PDF.
+
 ### Deleting a user model
 
 To have `buzzrec` to recreate your user model according to new keywords in `config.json`, simply delete the `user.csv` file before running the tool. Otherwise, your user model will be saved for repeated use.
