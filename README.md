@@ -1,14 +1,22 @@
 # buzzrec
  A content-based filtering recommendation engine for academic papers in linguistics from [LingBuzz](https://ling.auf.net/lingbuzz).
 
+## Requirements
+
+Python 3
+
 ## Installation
 
 Download this repository with the green Code button, or
 
 To download via `git`:
 ```cmd
- > git clone https://github.com/Dechrissen/buzzrec.git
+ $ git clone https://github.com/Dechrissen/buzzrec.git
  ```
+To install requirements, `cd` to the `buzzrec` directory, then
+```cmd
+$ pip install -r requirements.txt
+```
 
 ## Usage
 
@@ -30,7 +38,7 @@ For example:
 `cd` to the `buzzrec` directory, then
 
 ```cmd
-> python recommender.py
+$ python recommender.py
 ```
 
 ### Deleting a user model
