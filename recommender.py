@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import numpy as np
 from statistics import mean
+import nltk
 
 
 def recommend(title, cosine_sim, indices, df):
@@ -88,6 +89,8 @@ def check_new(check):
 #####################################
 ######## Program begins here ########
 #####################################
+nltk.download('stopwords')
+nltk.download('punkt')
 np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)})
 
 print('Building user model ...')
