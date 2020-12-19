@@ -99,7 +99,7 @@ print('Checking new uploads against user model ...')
 highest = 0
 recommendation = None
 # check the 10 newest papers
-for c in range(5):
+for c in range(10):
     possible_rec, score = check_new(c)
     if score > highest:
         highest = score
