@@ -13,7 +13,7 @@ To download via `git`:
 ```cmd
  $ git clone https://github.com/Dechrissen/buzzrec.git
  ```
-To install requirements, `cd` to the `buzzrec` directory, then
+To install requirements, `cd` to the `buzzrec` directory, then:
 ```cmd
 $ pip install -r requirements.txt
 ```
@@ -35,7 +35,7 @@ For example:
 
 ### Using the tool
 
-`cd` to the `buzzrec` directory, then
+`cd` to the `buzzrec` directory, then:
 
 ```cmd
 $ python recommender.py
