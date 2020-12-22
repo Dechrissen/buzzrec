@@ -64,11 +64,22 @@ def scrapeLingBuzzHomePage(number_of_paper):
     abstract = str(list(body.children)[5])
 
     # Keywords
-    keywords_tr = list(list(body.children)[6].children)[3]
-    keywords_list_td = list(keywords_tr.children)[1]
-    keywords = keywords_list_td.get_text()
-    keywords = re.split(r'[,|;]', keywords)
-    keywords = [k.strip() for k in keywords]
+    try:
+        keywords_tr = list(list(body.children)[6].children)[3]
+        keywords_list_td = list(keywords_tr.children)[1]
+        keywords = keywords_list_td.get_text()
+        keywords = re.split(r'[,|;]', keywords)
+        keywords = [k.strip() for k in keywords]
+    except:
+        # return dummy paper when keyword list parsing doesn't behave
+        title='dummy'
+        pdf_link='dummy'
+        authors=['dummy']
+        abstract='dummy'
+        keywords = ['dummy']
+        date='dummy'
+        current_paper = Paper(title, pdf_link, authors, abstract, keywords, date)
+        return current_paper
 
     # Construct Paper object
     current_paper = Paper(title, pdf_link, authors, abstract, keywords, date)
@@ -204,3 +215,5 @@ def classifier(text):
 #collected_papers = queryLingBuzz('pokemon')
 #for x in collected_papers:
     #print(x.date)
+#y = queryLingBuzz('That’s a Curious Copular Construction You Have There!')
+#print(y[0].title, y[0].keywords, y[0].abstract, y[0].link, y[0].authors, y[0].date)

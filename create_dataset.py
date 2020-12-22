@@ -17,12 +17,14 @@ def create_csv_copy(filename, check):
     with open(new_filename, 'a') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',')
         paper = scrapeLingBuzzHomePage(check)
+        if paper.title == 'dummy':
+            return False
         try:
             filewriter.writerow([paper.title, paper.link, paper.authors, paper.abstract, paper.keywords])
             test_title = paper.title
         except UnicodeEncodeError:
-            print('UnicodeEncodeError: \'' + paper.title[:31]+'...\'', 'skipped')
-            quit()
+            print(paper.title[:31]+'...\'', 'skipped')
+            return False
     return test_title
 
 def clean_authors(author_list):

@@ -15,7 +15,11 @@ def recommend(title, cosine_sim, indices, df):
     recommended_papers = {}
 
     # getting the index of the movie that matches the title
-    idx = indices[indices == title].index[0]
+    try:
+        idx = indices[indices == title].index[0]
+    except:
+        # return dummy values if indices doesn't behave (?)
+        return {}, 0.0
 
     # creating a Series with the similarity scores in descending order
     score_series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)
@@ -40,6 +44,8 @@ def recommend(title, cosine_sim, indices, df):
 def check_new(check):
     # create a copy of `user.csv` with 5 extra papers appended
     test_title = create_csv_copy('user.csv', check)
+    if not test_title:
+        return False
 
 
     # create the dataframe according to `user.csv`
@@ -78,6 +84,9 @@ def check_new(check):
 
 
     recs, score = recommend(test_title, cosine_sim, indices, df)
+    if score == 0.0:
+        # return False if recommend returns 0.0 for score
+        return False
     link = df['Link'][test_title]
     # This is to handle when more than one of the same paper is in the dataframe. str means 1, pandas Series means more than 1
     if type(link) is not str:
@@ -103,7 +112,11 @@ highest = 0
 recommendation = None
 # check the 10 newest papers
 for c in range(10):
-    possible_rec, score = check_new(c)
+    try:
+        possible_rec, score = check_new(c)
+    except TypeError:
+        # if check_new returns False, skip current iteration. This is to handle papers which don't behave
+        continue
     if score > highest:
         highest = score
         recommendation = possible_rec
