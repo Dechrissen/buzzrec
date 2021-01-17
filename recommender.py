@@ -98,8 +98,12 @@ def check_new(check):
 #####################################
 ######## Program begins here ########
 #####################################
+print('Downloading nltk dependencies ...')
 nltk.download('stopwords')
 nltk.download('punkt')
+print('Done')
+
+# numpy format for printing floats
 np.set_printoptions(formatter={'float': lambda x: "{0:0.8f}".format(x)})
 
 print('Building user model ...')
@@ -115,7 +119,7 @@ for c in range(10):
     try:
         possible_rec, score = check_new(c)
     except TypeError:
-        # if check_new returns False, skip current iteration. This is to handle papers which don't behave
+        # if check_new returns False, skip current iteration. This is to handle papers from LingBuzz which don't behave when being parsed
         continue
     if score > highest:
         highest = score

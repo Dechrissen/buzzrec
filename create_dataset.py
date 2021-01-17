@@ -51,6 +51,7 @@ def create_csv():
         try:
             papers_to_add = queryLingBuzz(term)
             collected_papers.extend(papers_to_add)
+            print("\'" + term + "\' query finished")
         except:
             print('No results found for', term)
             continue
