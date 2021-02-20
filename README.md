@@ -1,5 +1,7 @@
 # buzzrec
- A content-based filtering recommendation engine for academic papers in linguistics from [LingBuzz](https://ling.auf.net/lingbuzz).
+A content-based filtering recommendation engine for academic papers in linguistics from [LingBuzz](https://ling.auf.net/lingbuzz).  
+
+`buzzrec` can be downloaded and used locally as a command-line tool.
 
 ## Requirements
 
@@ -16,7 +18,7 @@
 
 First, download this repository with the green Code button, or via `git` like below:
 ```
- $ git clone https://github.com/Dechrissen/buzzrec.git
+$ git clone https://github.com/Dechrissen/buzzrec.git
 ```
 Next, install project dependencies. `cd` to the `buzzrec` directory, then:
 ```
@@ -27,7 +29,7 @@ $ pip install -r requirements.txt
 
 ### Initial setup
 Populate `config.json` with the following information:
-- `keywords`: keywords that define your interests (`buzzrec` will take these into consideration for its initial data collection)  
+- `keywords`: keywords that define your interests  
 
 For example:
 ```json
