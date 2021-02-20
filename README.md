@@ -3,6 +3,11 @@ A content-based filtering recommendation engine for academic papers in linguisti
 
 `buzzrec` can be downloaded and used locally as a command-line tool.
 
+## Table of Contents
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Usage](#usage)
+
 ## Requirements
 
 - Python 3
